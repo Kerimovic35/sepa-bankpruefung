@@ -15,7 +15,23 @@
       "eintraege": 2992,
       "sha256": "df7fb25bb266810699f65e639fd291076d1e0f30ec7da4e66c822b1afd150462",
       "geaendert_am": "2026-11-25T08:04:45+00:00"
+    },
+    "sdd_core": {
+      "bezeichnung": "EPC-Register SDD Core",
+      "datei": "sdd_core.csv",
+      "quelle": "https://www.europeanpaymentscouncil.eu/sites/default/files/participants_export/sdd_core/sdd_core.csv?v=1794609054",
+      "eintraege": 2730,
+      "sha256": "4f5be45bce08e7ff102ff30190671aaeb2821883943b3d1db03f954c75ebe0b2",
+      "geaendert_am": "2026-11-25T08:09:21+00:00"
+    },
+    "sdd_b2b": {
+      "bezeichnung": "EPC-Register SDD B2B",
+      "datei": "sdd_b2b.csv",
+      "quelle": "https://www.europeanpaymentscouncil.eu/sites/default/files/participants_export/sdd_b2b/sdd_b2b.csv?v=1794609032",
+      "eintraege": 2286,
+      "sha256": "d4475346ba3c4c2495012eac43f22467a428e5a9cbec4668106e2fb12f3f500c",
+      "geaendert_am": "2026-11-25T08:09:21+00:00"
     }
   },
-  "zuletzt_geaendert": "2026-11-25T08:04:45+00:00"
+  "zuletzt_geaendert": "2026-11-25T08:09:21+00:00"
 }

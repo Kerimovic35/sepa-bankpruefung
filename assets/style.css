@@ -28,7 +28,7 @@ code, .mono { font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; 
 .tabs { display: flex; gap: .25rem; flex-wrap: wrap; margin-top: 1rem; border-bottom: 1px solid var(--linie); }
 .tabs button {
   border: 0; background: none; padding: .6rem .9rem; font: inherit; color: var(--leise);
-  border-bottom: 3px solid transparent; cursor: pointer; margin-bottom: -1px;
+  border-bottom: 3px solid transparent; border-radius: 0; cursor: pointer; margin-bottom: -1px;
 }
 .tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--akzent); font-weight: 600; }
 .tabs button:focus-visible { outline: 2px solid var(--akzent); outline-offset: 2px; }

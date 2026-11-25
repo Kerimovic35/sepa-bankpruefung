@@ -1,0 +1,92 @@
+name: Daten aktualisieren und Seite veröffentlichen
+
+on:
+  schedule:
+    - cron: "23 5 * * *"   # täglich 05:23 UTC
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: daten-und-seite
+  cancel-in-progress: false
+
+jobs:
+  daten:
+    name: Register laden
+    runs-on: ubuntu-latest
+    outputs:
+      geaendert: ${{ steps.commit.outputs.geaendert }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Tests
+        run: |
+          python -m unittest discover -s tests -p "test_*.py"
+          node --test tests/pruefung.test.mjs
+
+      - name: Register und Bankleitzahlen laden
+        id: laden
+        run: |
+          set +e
+          python scripts/update_data.py
+          echo "rc=$?" >> "$GITHUB_OUTPUT"
+
+      # Erfolgreich geladene Quellen werden auch dann gespeichert, wenn eine
+      # andere Quelle fehlschlägt. Fehlgeschlagene Quellen behalten ihre alten Daten.
+      - name: Änderungen committen
+        id: commit
+        run: |
+          if [ -n "$(git status --porcelain data/)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/
+            git commit -m "Daten aktualisiert $(date -u +%Y-%m-%d)"
+            git push
+            echo "geaendert=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Keine inhaltlichen Änderungen."
+            echo "geaendert=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Abruf fehlgeschlagen?
+        if: steps.laden.outputs.rc != '0'
+        run: |
+          echo "::error::Mindestens eine Quelle konnte nicht geladen werden (Details oben). Die alten Daten bleiben bestehen."
+          exit 1
+
+  seite:
+    name: Seite veröffentlichen
+    needs: daten
+    # Neu deployen, wenn sich Daten geändert haben oder Code gepusht / manuell gestartet wurde –
+    # auch wenn der Datenabruf teilweise fehlgeschlagen ist.
+    if: ${{ !cancelled() && (needs.daten.outputs.geaendert == 'true' || github.event_name != 'schedule') }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main   # inklusive des gerade erzeugten Daten-Commits
+
+      - name: Seite zusammenstellen
+        run: |
+          mkdir _site
+          cp -r index.html assets data _site/
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4

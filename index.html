@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex">
+  <title>SEPA Bankprüfung</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/style.css">
+  <script type="module" src="assets/app.js"></script>
+</head>
+<body>
+  <header class="kopf">
+    <div class="wrap">
+      <h1>SEPA Bankprüfung</h1>
+      <p class="unter">Kann ein Konto per SEPA-Lastschrift (Core / B2B) erreicht werden? Prüfung gegen die EPC-Register.</p>
+      <p class="stand" id="stand-kurz">Daten werden geladen …</p>
+    </div>
+  </header>
+
+  <nav class="tabs wrap" role="tablist" aria-label="Bereiche">
+    <button role="tab" id="tab-einzel" aria-controls="p-einzel" aria-selected="true">Einzelprüfung</button>
+    <button role="tab" id="tab-mehrfach" aria-controls="p-mehrfach" aria-selected="false">Mehrfachprüfung</button>
+    <button role="tab" id="tab-laender" aria-controls="p-laender" aria-selected="false">Länderübersicht</button>
+    <button role="tab" id="tab-daten" aria-controls="p-daten" aria-selected="false">Datenstand &amp; Hinweise</button>
+  </nav>
+
+  <main class="wrap">
+    <div id="ladefehler" class="meldung fehler" hidden></div>
+
+    <!-- Einzelprüfung -->
+    <section id="p-einzel" role="tabpanel" aria-labelledby="tab-einzel">
+      <form id="form-einzel" class="karte" autocomplete="off">
+        <div class="felder">
+          <label>IBAN
+            <input id="in-iban" name="iban" spellcheck="false" placeholder="DE89 3704 0044 0532 0130 00" required>
+          </label>
+          <label>BIC <span class="opt">(optional bei DE/PL – wird aus der Bankleitzahl ermittelt)</span>
+            <input id="in-bic" name="bic" spellcheck="false" placeholder="COBADEFFXXX">
+          </label>
+        </div>
+        <button type="submit" class="primaer">Prüfen</button>
+      </form>
+      <div id="out-einzel" aria-live="polite"></div>
+    </section>
+
+    <!-- Mehrfachprüfung -->
+    <section id="p-mehrfach" role="tabpanel" aria-labelledby="tab-mehrfach" hidden>
+      <div class="karte">
+        <label for="in-mehrfach">Eine Zeile pro Lieferant: <code>Lieferant; IBAN; BIC</code> – Semikolon oder Tabulator (direkt aus Excel kopiert).</label>
+        <textarea id="in-mehrfach" rows="10" spellcheck="false" placeholder="Muster GmbH; DE89 3704 0044 0532 0130 00; COBADEFFXXX&#10;Przykład Sp. z o.o.; PL61 1090 1014 0000 0712 1981 2874;&#10;Exemple SARL; FR14 2004 1010 0505 0001 3M02 606; PSSTFRPPXXX"></textarea>
+        <div class="aktionen">
+          <button id="btn-mehrfach" class="primaer" type="button">Alle prüfen</button>
+          <button id="btn-kopieren" type="button" disabled>Ergebnis für Excel kopieren</button>
+          <button id="btn-csv" type="button" disabled>Als CSV herunterladen</button>
+          <span id="kopier-info" class="leise" aria-live="polite"></span>
+        </div>
+      </div>
+      <div id="out-mehrfach"></div>
+    </section>
+
+    <!-- Länderübersicht -->
+    <section id="p-laender" role="tabpanel" aria-labelledby="tab-laender" hidden>
+      <div class="karte">
+        <p>Anzahl der Einträge (BICs) je Land in den EPC-Registern. Das Land richtet sich nach dem Register bzw. nach Stelle 5–6 des BIC.</p>
+        <label class="schmal">Filter <input id="in-land" placeholder="z. B. Deutschland oder DE"></label>
+      </div>
+      <div id="out-laender"></div>
+    </section>
+
+    <!-- Datenstand -->
+    <section id="p-daten" role="tabpanel" aria-labelledby="tab-daten" hidden>
+      <div class="karte">
+        <h2>Datenstand</h2>
+        <div id="out-daten"></div>
+      </div>
+      <div class="karte">
+        <h2>So wird geprüft</h2>
+        <ul>
+          <li><strong>IBAN:</strong> Ländercode, Länge je Land und Prüfziffer (Modulo 97, ISO 13616).</li>
+          <li><strong>BIC:</strong> Vergleich über die ersten 8 Zeichen (Bank + Land + Ort) mit den EPC-Registern SDD Core und SDD B2B. Die Filialkennung (Stelle 9–11) wird ignoriert.</li>
+          <li><strong>Ohne BIC:</strong> Bei deutschen und polnischen IBANs wird der BIC aus der Bankleitzahl (Bundesbank- bzw. NBP-Liste) ermittelt. Bei anderen Ländern lautet das Ergebnis „BIC fehlt“.</li>
+        </ul>
+        <h2>Grenzen</h2>
+        <ul>
+          <li>Die Aufnahme ins EPC-Register heißt nur, dass die Bank am Verfahren <em>teilnimmt</em>. Ob sie Lastschriften – insbesondere <strong>B2B</strong> – für ein bestimmtes Konto oder für Firmenkunden tatsächlich anbietet, sagt das Register nicht. Im Zweifel beim Lieferanten bzw. dessen Bank nachfragen.</li>
+          <li>SEPA-Lastschriften sind nur für <strong>Euro</strong>-Zahlungen. Eine gültige IBAN in z. B. PL, CZ oder SE kann ein Konto in Landeswährung sein; ob es ein Euro-Konto ist, lässt sich aus der IBAN nicht ablesen.</li>
+          <li>Für B2B-Lastschriften muss der Zahlungspflichtige das Mandat zusätzlich bei seiner Bank hinterlegen.</li>
+          <li>Die Prüfung ersetzt keine Bestätigung durch die Bank. Keine Gewähr für Vollständigkeit und Aktualität der Register.</li>
+        </ul>
+        <h2>Datenschutz</h2>
+        <p>Alle Prüfungen laufen ausschließlich in Ihrem Browser. Eingaben werden nicht gespeichert und nicht übertragen. Kein Tracking, keine Cookies, keine externen Dienste.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap fuss">
+    Quellen: European Payments Council (Register der Teilnehmer), Deutsche Bundesbank (Bankleitzahlendatei), Narodowy Bank Polski (EWIB).
+  </footer>
+</body>
+</html>

@@ -1,5 +1,7 @@
 # SEPA Bankprüfung
 
+**Live:** https://sepa.menteon.de
+
 Statische Website, die prüft, ob ein Konto per **SEPA-Lastschrift** (Core und/oder B2B) erreichbar ist. Grundlage sind die Teilnehmerregister des European Payments Council (EPC). Die Register werden täglich automatisch geladen.
 
 - Läuft komplett im Browser: kein Server, kein Tracking, keine Cookies, keine externen Schriften oder Skripte.
@@ -50,6 +52,7 @@ Statische Website, die prüft, ob ein Konto per **SEPA-Lastschrift** (Core und/o
 3. **Schreibrechte der Action:** *Settings → Actions → General → Workflow permissions → „Read and write permissions“*. Der Workflow fordert `contents: write` zwar selbst an, in manchen Organisationen ist das aber gesperrt.
 4. **Erster Lauf:** *Actions → „Daten aktualisieren und Seite veröffentlichen“ → Run workflow*.
 5. Die Seite ist danach unter `https://<benutzer>.github.io/<repository>/` erreichbar.
+6. **Eigene Domain (optional):** Beim DNS-Anbieter einen CNAME-Eintrag `<subdomain>` → `<benutzer>.github.io` anlegen. Dann unter *Settings → Pages → Custom domain* die Domain eintragen und „Enforce HTTPS“ aktivieren. Eine `CNAME`-Datei ist beim Deployment über Actions nicht nötig. Diese Instanz läuft unter `sepa.menteon.de` (CNAME `sepa` → `kerimovic35.github.io`, DNS bei Hostinger).
 
 ### Ablauf der Action (`.github/workflows/daten-und-seite.yml`)
 

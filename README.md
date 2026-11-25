@@ -74,7 +74,7 @@ Statische Website, die prüft, ob ein Konto per **SEPA-Lastschrift** (Core und/o
 
 ## Wichtig: Bot-Schutz der EPC-Website
 
-Die EPC-Website steht hinter einem Cloudflare-Bot-Schutz. Bei Tests beim Aufbau dieses Projekts lieferte sie automatisierten Abrufen eine Prüfseite („Just a moment…“, HTTP 403) statt des Inhalts. Je nach Einstellung des EPC kann das auch die Server von GitHub Actions treffen. Die Action schlägt dann sichtbar fehl, die alten Daten bleiben erhalten. Das Skript versucht **nicht**, den Bot-Schutz zu umgehen.
+Die EPC-Website steht hinter einem Cloudflare-Bot-Schutz. Beim ersten Lauf der Action (25.11.2026) hat der Abruf von GitHub Actions aus funktioniert. Von anderen Servern aus kam dagegen nur eine Prüfseite („Just a moment…“, HTTP 403). Ändert das EPC seine Einstellungen, kann auch GitHub blockiert werden. Die Action schlägt dann sichtbar fehl und die alten Daten bleiben erhalten. Das Skript versucht **nicht**, den Bot-Schutz zu umgehen.
 
 ### Manuelle Aktualisierung (falls der automatische Abruf blockiert wird)
 

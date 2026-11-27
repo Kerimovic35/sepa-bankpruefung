@@ -13,8 +13,8 @@
       "datei": "blz_pl.csv",
       "quelle": "https://ewib.nbp.pl/plewibnra?dokNazwa=plewibnra.txt",
       "eintraege": 2992,
-      "sha256": "df7fb25bb266810699f65e639fd291076d1e0f30ec7da4e66c822b1afd150462",
-      "geaendert_am": "2026-11-25T08:04:45+00:00"
+      "sha256": "00d15bd0397ebbbf9fa6eae4cee9a40ba9ab137f5d4101e0cda39a54dba823f5",
+      "geaendert_am": "2026-11-27T15:21:15+00:00"
     },
     "sdd_core": {
       "bezeichnung": "EPC-Register SDD Core",
@@ -33,5 +33,5 @@
       "geaendert_am": "2026-11-25T08:09:21+00:00"
     }
   },
-  "zuletzt_geaendert": "2026-11-25T08:09:21+00:00"
+  "zuletzt_geaendert": "2026-11-27T15:21:15+00:00"
 }
